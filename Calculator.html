@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery Calculator</title>
+
+    <!-- Added link to the jQuery Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Added a link to Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+</head>
+<body>
+
+<!-- Jumbotron for Title -->
+<div class="jumbotron">
+    <h1 class="text-center">jQuery Calculator</h1>
+    <h3 class="text-center">Perform basic mathematic operations using the power of jQuery!</h3>
+</div>
+
+<div class="container">
+
+    <div class="row">
+
+        <!-- Calculator Panel -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Calculator</h3>
+                </div>
+
+                <div class="panel-body">
+                    <button id="button-1" class="btn btn-primary number" value="1"><h1>1</h1></button>
+                    <button id="button-2" class="btn btn-primary number" value="2"><h1>2</h1></button>
+                    <button id="button-3" class="btn btn-primary number" value="3"><h1>3</h1></button>
+                    <button id="button-plus" class="btn btn-danger operator" value="plus"><h1>+</h1></button>
+                    <br><br>
+                    <button id="button-4" class="btn btn-primary number" value="4"><h1>4</h1></button>
+                    <button id="button-5" class="btn btn-primary number" value="5"><h1>5</h1></button>
+                    <button id="button-6" class="btn btn-primary number" value="6"><h1>6</h1></button>
+                    <button id="button-minus" class="btn btn-danger operator" value="minus"><h1>&minus;</h1></button>
+                    <br><br>
+                    <button id="button-7" class="btn btn-primary number" value="7"><h1>7</h1></button>
+                    <button id="button-8" class="btn btn-primary number" value="8"><h1>8</h1></button>
+                    <button id="button-9" class="btn btn-primary number" value="9"><h1>9</h1></button>
+                    <button id="button-multiply" class="btn btn-danger operator" value="times"><h1>&times;</h1></button>
+                    <br><br>
+                    <button id="button-0" class="btn btn-primary number" value="0"><h1>0</h1></button>
+                    <button id="button-divide" class="btn btn-danger operator" value="divide"><h1>&divide;</h1></button>
+                    <button id="button-power" class="btn btn-danger operator" value="power"><h1>^</h1></button>
+                    <button id="button-equal" class="btn btn-success equal" value="equals"><h1>=</h1></button>
+                    <br><br>
+                    <button id="button-clear" class="btn btn-default clear" value="clear"><h1>clear</h1></button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="col-lg-6">
+        <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Result</h3>
+                </div>
+                <div class="panel-body">
+                    <ul id="numList" class="list-group">
+                        <li id="q0" class="list-group-item"> </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+var acumulator = [];
+var numberString = "";
+var idLine = 0;
+
+$(document).ready(function(){
+
+    $(".number").on("click", function(){
+        
+        numberString += this.value;
+        $("#q" + idLine).text(numberString);
+        console.log(acumulator)
+    });
+    $(".operator").on("click", function(){
+        
+        if (numberString != ""){
+            acumulator.push(numberString);
+
+
+        }
+        writeOperator(this.value);
+        writeLine("");
+        
+        numberString = "";
+
+        acumulator.push(this.value);
+        console.log(acumulator);
+    });
+    $(".equal").on("click", function(){
+        acumulator.push(numberString);
+        
+        console.log(acumulator);
+        total(acumulator);
+        
+    });
+    $(".clear").on("click", function(){
+        clear();
+    });
+    //BUTTONS FROM 0-9
+
+// Your code here...
+
+
+});
+
+
+var trans = {
+    plus: function(num1,num2){
+        return Number(num1) + Number(num2);
+    },
+    minus: function(num1,num2){
+        return Number(num1)-Number(num2);
+    },
+    times: function(num1,num2){
+        return Number(num1)*Number(num2);
+    },
+    divide: function(num1,num2){
+        return Number(num1)/Number(num2);
+    },
+    power: function(num, pow){
+        return Math.pow(num, pow);
+    }
+}
+function total(array){
+    var times = Math.floor(array.length/2);
+    for (var i = 0; i < times; i++){
+        numOperator(array);
+    }
+    
+    numberString = "";
+    writeLine("Result: " + acumulator[0]);
+
+}
+function numOperator(array){
+    var num1 = array[0];
+    var num2 = array[2];
+    var operation = array[1];
+
+    var result = trans[operation](num1,num2);
+
+    array.splice(0,3);
+    array.unshift(result);
+    return array;
+}
+function clear(){
+    acumulator = [];
+    numberString = "";
+    $("#numList").empty();
+    idLine = 0;
+
+    var newLi = $("<li>");  
+    newLi.attr("class", "list-group-item").attr("id", "q0");
+    newLi.text("");
+    $("#numList").append(newLi);
+}
+function writeLine(text){
+    var newLi = $("<li>");  
+    newLi.attr("class", "list-group-item").attr("id", "q" + (Number(idLine) +1));
+    idLine = Number(idLine) + 1;
+    newLi.text(text);
+    $("#numList").append(newLi);
+}
+function writeOperator(operator){
+    var sign = "";
+    if (operator === "plus"){
+        sign = "+";
+    } else if (operator === "minus"){
+        sign = "-";
+    } else if (operator === "times"){
+        sign = "x";
+    } else if (operator === "divide"){
+        sign = "/";
+    } else if (operator === "power"){
+        sign = "^";
+    }
+    var newLi = $("<li>");  
+    newLi.attr("class", "list-group-item").attr("id", "q" + (Number(idLine) +1));
+    idLine = Number(idLine) + 1;
+    newLi.text(sign);
+    $("#numList").append(newLi);
+}
+</script>
+
+</body>
+</html>
